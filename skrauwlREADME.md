@@ -6,7 +6,7 @@
 
 - Kabeera Singh - Kabeera-Singh
 - Brandon O'Brien Jones - bobrienjones
-- Robert Washbourne - Null
+- Robert Washbourne - rawsh
 - Anthony Marcone - Null
 
 ## Innovative Idea:
