@@ -12,7 +12,7 @@ Brandon O'Brien Jones - bobrienjones : Worked on the game screen from the guesse
 
 Robert Washbourne - rawsh : Worked on the game screen from the drawer's persepective.
 
-Anthony Marcone - Null : Worked on the end game screen
+Anthony Marcone - antchamp : Worked on the end game screen
 
 ## Interactions Between Users and Data
 
