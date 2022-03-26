@@ -6,7 +6,7 @@
 
 - Kabeera Singh - Kabeera-Singh
 - Brandon O'Brien Jones - bobrienjones
-- Robert Washbourne - Null
+- Robert Washbourne - rawsh
 - Anthony Marcone - Null
 
 ## Innovative Idea:
@@ -24,3 +24,5 @@ In this case, each drawer will submit their drawing after a period of time. Then
 ### Important Components:
 
 Our important components are: Point based ranking, Drawing Components, the box for guessing words, Updating the score, Sound effect for each guess, Game Creation with multiple players on different computers.
+
+
