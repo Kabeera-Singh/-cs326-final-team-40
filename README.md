@@ -7,7 +7,7 @@
 - Kabeera Singh - Kabeera-Singh
 - Brandon O'Brien Jones - bobrienjones
 - Robert Washbourne - rawsh
-- Anthony Marcone - Null
+- Anthony Marcone - antchamp
 
 ## Innovative Idea:
 
