@@ -1,0 +1,27 @@
+
+#playerlist{
+   text-align: right;
+  }
+
+.container{
+    height: fit-content;
+    width: fit-content;
+    text-align: center;
+    align-content: space-around;
+    font-size: xx-large;
+    padding: 2em;
+}
+
+.winner{
+  align-items:center;
+  width: 5em;
+  height: 5em;
+  padding: 1em;
+}
+
+.icon{
+  width: 2em;
+  height: 2em;
+  align-items: left;
+}
+
