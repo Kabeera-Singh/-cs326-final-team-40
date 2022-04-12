@@ -1,0 +1,13 @@
+{
+  "name": "Team40FinalProject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Kabeera-Singh/-cs326-final-team-40",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "private": false,
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
