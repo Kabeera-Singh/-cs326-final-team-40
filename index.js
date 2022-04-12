@@ -92,8 +92,7 @@ app.post('/game/:game_id/:player_id', async (req, res) => {
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
         const newplayer = {
             canvas: "",
-            guesses: [],
-            score: 0
+            guesses: []
         }
         game.players[req.params.player_id] = newplayer;
         game.words[req.params.player_id] = random_word;
@@ -148,6 +147,21 @@ app.put('/game/:game_id/:player_id/guess', async (req, res) => {
         } else {
             res.status(404).send('Player not found');
         }
+    } else {
+        res.status(404).send('Game not found');
+    }
+});
+
+app.get('/game/:game_id/score', async (req, res) => {
+    const game = db.data.games.find(game => game.gameID == req.params.game_id);
+    if (game) {
+        let numCorrect = {};
+        for (let player in game.players) {
+            res[player] = game.players[player].guesses.map(guess => {
+                return game.words[player] === guess ? 1 : 0;
+            }).reduce((a, b) => a + b);
+        }
+        res.send(numCorrect);
     } else {
         res.status(404).send('Game not found');
     }
