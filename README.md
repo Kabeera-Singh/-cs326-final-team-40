@@ -1,5 +1,7 @@
 # Team Name: Jot Team
 
+Run the node app with `yarn start` or `npm start` and go to http://localhost:3000
+
 ## skrauwl.io
 
 ## Team Overview:
