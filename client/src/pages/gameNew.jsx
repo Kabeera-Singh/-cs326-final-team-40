@@ -35,13 +35,13 @@ export default function GameNew(props) {
     if (gameId === "") {
       alert("Please enter a game ID");
       return;
-    }
-    if (name === "") {
+    } else if (name === "") {
       alert("Please enter a name");
       return;
+    } else {
+      await joinGame(gameId, name);
+      navigate('/' + gameId);
     }
-    await joinGame(gameId, name);
-    navigate('/' + gameId);
   }
 
   return (
