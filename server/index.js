@@ -97,7 +97,7 @@ app.get('/game/:game_id', async (req, res) => {
 
 // add a player to a game
 app.post('/game/:game_id/:player_id', async (req, res) => {
-    const game = db.data.games.find(game => game.gameID == req.params.game_id);
+    const game = db.data.games.find(game => game.gameID === req.params.game_id);
     if (game) {
         // get a random word for this player to draw
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
