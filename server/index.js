@@ -5,6 +5,7 @@ import { Low, JSONFile } from 'lowdb'
 import { readFile } from 'fs'
 import express from 'express'
 import cors from 'cors'
+import bodyParser from 'body-parser'
 
 // Use JSON file for storage
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -28,6 +29,8 @@ const app = express();
 const port = 3000;
 app.use(express.static('public'));
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
@@ -103,7 +106,7 @@ app.post('/game/:game_id/:player_id', async (req, res) => {
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
         const newplayer = {
             canvas: "",
-            guesses: []
+            guesses: {}
         }
         game.players[req.params.player_id] = newplayer;
         game.words[req.params.player_id] = random_word;
@@ -147,14 +150,25 @@ app.put('/game/:game_id/:player_id/canvas', async (req, res) => {
 });
 
 // update the guesses for a specific game id and player id
-app.put('/game/:game_id/:player_id/guess', async (req, res) => {
+app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
+        if (req.params.guesser_id == req.params.player_id) {
+            res.status(400).send('You cannot guess your own word');
+            return;
+        }
+        const guesser = game.players[req.params.guesser_id];
         const player = game.players[req.params.player_id];
-        if (player) {
-            player.guesses.push(req.body.guess);
+        if (guesser && player) {
+            const reqbody = req.body;
+            if ("guess" in reqbody) {
+                guesser.guesses[req.params.player_id] = reqbody.guess;
+            } else {
+                res.status(400).send('Guess not in body');
+                return;
+            }
             await db.write();
-            res.send(player);
+            res.send(guesser);
         } else {
             res.status(404).send('Player not found');
         }
