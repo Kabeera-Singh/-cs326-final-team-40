@@ -1,0 +1,36 @@
+#FrontImage{
+    width: 20em;
+    height: 20em;
+}
+
+#make-lobby{
+    width: 12em;
+    height: 3em;
+    background-color: rgb(148, 238, 238);
+    color: white;
+}
+
+#lobbycode{
+    color: darkblue;
+    font-size: 2em;
+}
+
+.lobbycodetext{
+    color: black;
+    font-size: 1.5em; 
+}
+.icon{
+    width: 3em;
+    height: 3em;
+    align-items: bottom;
+}
+
+.playerlist{
+    text-align: center;
+    color: black;
+    font-size: 1.5em; 
+    
+}
+.body{
+    text-align: center;
+}
