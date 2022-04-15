@@ -2,8 +2,9 @@ import { nanoid } from 'nanoid'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { Low, JSONFile } from 'lowdb'
-import express from 'express'
 import { readFile } from 'fs'
+import express from 'express'
+import cors from 'cors'
 
 // Use JSON file for storage
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -26,6 +27,16 @@ db.data ||= { games: [] }
 const app = express();
 const port = 3000;
 app.use(express.static('public'));
+app.use(cors());
+
+app.use(function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
 
 // later: use socket.io for the realtime connection
 // ### Operations
@@ -68,7 +79,7 @@ app.post('/newgame', async (req, res, next) => {
     try {
         db.data.games.push(newgame);
         await db.write();
-        res.send(newgame.players);
+        res.send(newgame);
     } catch (error) {
         return next(error);
     }
