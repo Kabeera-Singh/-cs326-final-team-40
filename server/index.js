@@ -118,7 +118,7 @@ app.post('/game/:game_id/:player_id', async (req, res) => {
 });
 
 // get the game state for a specific game id and player id
-app.get('/game/:game_id/:player_id', async (req, res) => {
+app.get('/game/:game_id/join/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         const player = game.players[req.params.player_id];
@@ -159,6 +159,7 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
         }
         const guesser = game.players[req.params.guesser_id];
         const player = game.players[req.params.player_id];
+
         if (guesser && player) {
             const reqbody = req.body;
             if ("guess" in reqbody) {
@@ -182,8 +183,10 @@ app.get('/game/:game_id/score', async (req, res) => {
     if (game) {
         let numCorrect = {};
         for (let player in game.players) {
-            res[player] = game.players[player].guesses.map(guess => {
-                return game.words[player] === guess ? 1 : 0;
+            res[player] = game.players[player].guesses.keys().map(guess => {
+                // guess is the player id
+                // currently broken 
+                return game.words[player] === game.players[player].guesses ? 1 : 0;
             }).reduce((a, b) => a + b);
         }
         res.send(numCorrect);
