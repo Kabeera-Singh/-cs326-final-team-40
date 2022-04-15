@@ -23,7 +23,7 @@ export default function GameNew(props) {
   }
 
   async function joinGame(gameID, playerName) {
-    const response = await fetch('http://localhost:3000/game/'+gameID+"/"+playerName, {
+    const response = await fetch('http://localhost:3000/game/'+gameID+"/join/"+playerName, {
       crossDomain: true,
       method: 'POST'
     });
