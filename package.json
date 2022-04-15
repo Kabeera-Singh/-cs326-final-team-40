@@ -1,7 +1,10 @@
 {
   "name": "team40final",
   "version": "1.0.0",
-  "repository": "https://github.com/Kabeera-Singh/-cs326-final-team-40",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kabeera-Singh/-cs326-final-team-40.git"
+  },
   "type": "module",
   "exports": "./index.js",
   "license": "MIT",
@@ -25,5 +28,15 @@
   "devDependencies": {
     "concurrently": "^7.1.0",
     "nodemon": "^2.0.15"
-  }
+  },
+  "description": "Run the node app with `yarn start` or `npm start` and go to http://localhost:3000",
+  "bugs": {
+    "url": "https://github.com/Kabeera-Singh/-cs326-final-team-40/issues"
+  },
+  "homepage": "https://github.com/Kabeera-Singh/-cs326-final-team-40#readme",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "author": ""
 }
