@@ -162,8 +162,11 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
 
         if (guesser && player) {
             const reqbody = req.body;
+            const curr_guesses = guesser.guesses[req.params.player_id] ?? [];
+            console.log(curr_guesses);
             if ("guess" in reqbody) {
-                guesser.guesses[req.params.player_id] = reqbody.guess;
+                curr_guesses.push(reqbody.guess);
+                guesser.guesses[req.params.player_id] = curr_guesses;
             } else {
                 res.status(400).send('Guess not in body');
                 return;
@@ -178,22 +181,60 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     }
 });
 
-app.get('/game/:game_id/score', async (req, res) => {
+/**
+ * Example of a POST request
+ * http://localhost:3000/game/YCMimdY444TBHKc5zArTb/abc/score
+ * 
+ * Takes in a game id, and player id and returns a score 
+ * Score Calculation:
+ *  - If the player guesses the word, they get a 100 points
+ *  - For every wrong guess the player loses 10 points
+ */
+ app.get('/game/:game_id/:player_id/score', async (req, res) => {
+    await db.read();
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
-        let numCorrect = {};
-        for (let player in game.players) {
-            res[player] = game.players[player].guesses.keys().map(guess => {
-                // guess is the player id
-                // currently broken 
-                return game.words[player] === game.players[player].guesses ? 1 : 0;
-            }).reduce((a, b) => a + b);
+        const player = game.players[req.params.player_id];
+        let score = 0;
+        if (player) {
+            for (let target of Object.keys(player.guesses)) {
+                let canvas_score = 0;
+                for (let guess of player.guesses[target]) {
+                    if (guess !== game.words[target]) {
+                        canvas_score -= 10;
+                    }
+                    else if (guess === game.words[target]) {
+                        canvas_score +=100;
+                        break;
+                    }
+                }
+                score += canvas_score;
+            }
+            res.send(score.toString());
+        } else {
+            res.status(404).send('Player not found');
         }
-        res.send(numCorrect);
     } else {
         res.status(404).send('Game not found');
     }
 });
+
+// app.get('/game/:game_id/score', async (req, res) => {
+//     const game = db.data.games.find(game => game.gameID == req.params.game_id);
+//     if (game) {
+//         let numCorrect = {};
+//         for (let player in game.players) {
+//             res[player] = game.players[player].guesses.keys().map(guess => {
+//                 // guess is the player id
+//                 // currently broken 
+//                 return game.words[player] === game.players[player].guesses ? 1 : 0;
+//             }).reduce((a, b) => a + b);
+//         }
+//         res.send(numCorrect);
+//     } else {
+//         res.status(404).send('Game not found');
+//     }
+// });
 
 // delete the game for a specific game id
 app.delete('/game/:game_id', (req, res) => {
