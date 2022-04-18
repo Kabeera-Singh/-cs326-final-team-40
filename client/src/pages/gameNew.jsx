@@ -1,7 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-
 export default function GameNew(props) {
   const [gameId, setGameId] = useState('');
   const [name, setName] = useState('');
@@ -19,7 +18,7 @@ export default function GameNew(props) {
     const data = await response.json();
     setGameId(data.gameID);
     await joinGame(data.gameID, name);
-    navigate('/' + data.gameID);
+    navigate('/' + data.gameID + '/' + name);
   }
 
   async function joinGame(gameID, playerName) {
@@ -28,8 +27,7 @@ export default function GameNew(props) {
       method: 'POST'
     });
     const data = await response.json();
-    console.log(data);
-    // navigate('/' + gameID);
+    return data;
   }
   async function joinGameID() {
     if (gameId === "") {
@@ -40,7 +38,7 @@ export default function GameNew(props) {
       return;
     } else {
       await joinGame(gameId, name);
-      navigate('/' + gameId);
+      navigate('/' + gameId + '/' + name);
     }
   }
 
