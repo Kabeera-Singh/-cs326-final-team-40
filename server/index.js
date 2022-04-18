@@ -101,7 +101,11 @@ app.get('/game/:game_id', async (req, res) => {
 // add a player to a game
 app.post('/game/:game_id/join/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID === req.params.game_id);
-    if (game) {
+    const player = game.players[req.params.player_id];
+    if (player) {
+        res.status(400).send('Player already exists');
+    }
+    else if (game) {
         // get a random word for this player to draw
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
         const newplayer = {
@@ -149,7 +153,15 @@ app.put('/game/:game_id/:player_id/canvas', async (req, res) => {
     }
 });
 
-// update the guesses for a specific game id and player id
+/**
+ * Example of a POST request
+ * http://localhost:3000/game/:game_id/:guesser_id/guess/:player_id
+ * Body:
+ *  {"guess": "word"}
+ * 
+ * Takes in a game id, two player id's (guesser and player), and a guess
+ * Adds the guess to the guess list for the player and returns the updated player
+ */
 app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
@@ -165,6 +177,10 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
             const curr_guesses = guesser.guesses[req.params.player_id] ?? [];
             console.log(curr_guesses);
             if ("guess" in reqbody) {
+                if(curr_guesses.includes(reqbody.guess)) {
+                    res.status(400).send('You have already guessed this word');
+                    return;
+                }
                 curr_guesses.push(reqbody.guess);
                 guesser.guesses[req.params.player_id] = curr_guesses;
             } else {
@@ -218,23 +234,6 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
         res.status(404).send('Game not found');
     }
 });
-
-// app.get('/game/:game_id/score', async (req, res) => {
-//     const game = db.data.games.find(game => game.gameID == req.params.game_id);
-//     if (game) {
-//         let numCorrect = {};
-//         for (let player in game.players) {
-//             res[player] = game.players[player].guesses.keys().map(guess => {
-//                 // guess is the player id
-//                 // currently broken 
-//                 return game.words[player] === game.players[player].guesses ? 1 : 0;
-//             }).reduce((a, b) => a + b);
-//         }
-//         res.send(numCorrect);
-//     } else {
-//         res.status(404).send('Game not found');
-//     }
-// });
 
 // delete the game for a specific game id
 app.delete('/game/:game_id', (req, res) => {
