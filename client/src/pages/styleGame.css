@@ -1,53 +1,25 @@
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: 20px, 310px, 20px, 310px;
-    grid-gap: 20px;
-    width: 303px;
-    height: 303px;
-  }
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-column-gap: 20px;
+    grid-row-gap: 20px; 
+}
+
+.grid-item {
+    max-width: 400px;
+}
 
 .scorekeeper{
     position: absolute;
     right: 0px;
     top: 0px;
     width: 200px;
-    border: 1px solid black;    
+    border: 1px solid black;
+}
 
-}
-
-#player1{
-    width: 300px; 
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
-}
-#player2{
-    width: 300px; 
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
-}
-#player3{
-    width: 300px; 
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
-}
-#player4{
-    width: 300px; 
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
-}
-#player5{
-    width: 300px; 
-    height: 300px;
-    background-color: white;
-    border: 1px solid black;
-}
-#player6{
-    width: 300px; 
+.playercanvas {
+    width: 400px; 
     height: 300px;
     background-color: white;
     border: 1px solid black;

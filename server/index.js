@@ -94,7 +94,9 @@ app.get('/game/:game_id/playerlist', async (req, res) => {
     if (game) {
         res.send(Object.keys(game.players));
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -107,10 +109,14 @@ app.get('/game/:game_id/:player_id', async (req, res) => {
             player.myWord = game.words[req.params.player_id];
             res.send(player);
         } else {
-            res.status(404).send('Player not found');
+            res.status(404).send({
+                "error": 'Player not found'
+            });
         }
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -119,7 +125,9 @@ app.post('/game/:game_id/:player_id/join', async (req, res) => {
     const game = db.data.games.find(game => game.gameID === req.params.game_id);
     const player = game.players[req.params.player_id];
     if (player) {
-        res.status(400).send('Player already exists');
+        res.status(400).send({
+            "error": 'Player already exists'
+        });
     }
     else if (game) {
         // get a random word for this player to draw
@@ -134,7 +142,9 @@ app.post('/game/:game_id/:player_id/join', async (req, res) => {
         newplayer.myWord = random_word;
         res.send(newplayer);
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -148,10 +158,14 @@ app.put('/game/:game_id/:player_id/canvas', async (req, res) => {
             await db.write();
             res.send(player);
         } else {
-            res.status(404).send('Player not found');
+            res.status(404).send({
+                "error": 'Player not found'
+            });
         }
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -161,19 +175,25 @@ app.get('/game/:game_id/:guesser_id/guesses', async (req, res) => {
     if (game) {
         const guesser = game.players[req.params.guesser_id];
         if (guesser) {
-            let canvas = Object.assign({}, game.players)
-            Object.keys(canvas).map(player => {
-                let tmp = Object.assign({}, canvas[player]);
+            let guesses_res = []; // return a list 
+            Object.keys(game.players).map(player => {
+                let tmp = Object.assign({}, game.players[player]);
                 delete tmp.guesses;
+                tmp.player = player;
                 tmp.guesses = guesser.guesses[player] || [];
-                canvas[player] = tmp;
+                tmp.correct = tmp.guesses.at(-1) == game.words[player];
+                guesses_res.push(tmp);
             })
-            res.send(canvas);
+            res.send(guesses_res);
         } else {
-            res.status(404).send('Player not found');
+            res.status(404).send({
+                "error": 'Player not found'
+            });
         }
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -191,7 +211,9 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         if (req.params.guesser_id == req.params.player_id) {
-            res.status(400).send('You cannot guess your own word');
+            res.status(400).send({
+                "error": 'You cannot guess your own word'
+            });
             return;
         }
         const guesser = game.players[req.params.guesser_id];
@@ -202,22 +224,30 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
             const curr_guesses = guesser.guesses[req.params.player_id] ?? [];
             if ("guess" in reqbody) {
                 if(curr_guesses.includes(reqbody.guess)) {
-                    res.status(400).send('You have already guessed this word');
+                    res.status(400).send({
+                        "error": 'You have already guessed this word'
+                    });
                     return;
                 }
                 curr_guesses.push(reqbody.guess);
                 guesser.guesses[req.params.player_id] = curr_guesses;
             } else {
-                res.status(400).send('Guess not in body');
+                res.status(400).send({
+                    "error": 'Guess not in body'
+                });
                 return;
             }
             await db.write();
             res.send(guesser);
         } else {
-            res.status(404).send('Player not found');
+            res.status(404).send({
+                "error": 'Player not found'
+            });
         }
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -252,10 +282,14 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
             }
             res.send(score.toString());
         } else {
-            res.status(404).send('Player not found');
+            res.status(404).send({
+                "error": 'Player not found'
+            });
         }
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
@@ -267,13 +301,17 @@ app.delete('/game/:game_id', (req, res) => {
         db.write();
         res.send(game.players);
     } else {
-        res.status(404).send('Game not found');
+        res.status(404).send({
+            "error": 'Game not found'
+        });
     }
 });
 
 // doesnt match any route
 app.use((req, res) => {
-    res.status(404).send('Not found');
+    res.status(404).send({
+        "error": 'Not found'
+    });
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
