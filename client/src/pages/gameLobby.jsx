@@ -23,19 +23,19 @@ export default function GameLobby(props) {
     });
   }
 
-  async function callStartGame(gameid) {
-    // TODO
-    const response = await fetch('http://localhost:3000/game/'+gameid+'/start', {
-      crossDomain: true,
-      method: 'POST'
-    }).catch(err => {
-      // setHasError(true);
-      console.error(err);
-      return
-    });
-    const data = await response.json();
-    console.log(data);
-  }
+  // async function callStartGame(gameid) {
+  //   // TODO
+  //   await fetch('http://localhost:3000/game/'+gameid+'/start', {
+  //     crossDomain: true,
+  //     method: 'POST'
+  //   }).then(res => res.json()).then(data => {
+  //     console.log(data);
+  //   }).catch(err => {
+  //     // setHasError(true);
+  //     console.error(err);
+  //     return
+  //   });
+  // }
 
   async function startGame() {
     navigate('/'+id+'/' + playerid + '/draw');
