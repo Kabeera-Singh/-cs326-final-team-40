@@ -16,7 +16,7 @@
     "client": "yarn --cwd client/ start",
     "clientwin": "npm run start --prefix client",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
-    "devwin": "concurrently \"npm run server\" \"npm run client\""
+    "devwin": "concurrently \"npm run server\" \"npm run clientwin\""
   },
   "private": false,
   "dependencies": {
