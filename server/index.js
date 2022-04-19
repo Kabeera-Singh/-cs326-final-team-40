@@ -92,7 +92,7 @@ app.post('/newgame', async (req, res, next) => {
 app.get('/game/:game_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
-        res.send(game.players);
+        res.send(Object.keys(game.players));
     } else {
         res.status(404).send('Game not found');
     }
@@ -110,8 +110,7 @@ app.post('/game/:game_id/join/:player_id', async (req, res) => {
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
         const newplayer = {
             canvas: "",
-            guesses: {},
-            myWord: ""
+            guesses: {}
         }
         newplayer.myWord = random_word;
         game.players[req.params.player_id] = newplayer;
@@ -127,8 +126,9 @@ app.post('/game/:game_id/join/:player_id', async (req, res) => {
 app.get('/game/:game_id/player/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
-        const player = game.players[req.params.player_id];
+        const player = Object.assign({}, game.players[req.params.player_id]); // copy the object
         if (player) {
+            player.myWord = game.words[req.params.player_id];
             res.send(player);
         } else {
             res.status(404).send('Player not found');
@@ -139,7 +139,7 @@ app.get('/game/:game_id/player/:player_id', async (req, res) => {
 });
 
 // update the canvas for a specific game id and player id
-app.put('/game/:game_id/:player_id/canvas', async (req, res) => {
+app.put('/game/:game_id/player/:player_id/canvas', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         const player = game.players[req.params.player_id];
@@ -177,7 +177,6 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
         if (guesser && player) {
             const reqbody = req.body;
             const curr_guesses = guesser.guesses[req.params.player_id] ?? [];
-            console.log(curr_guesses);
             if ("guess" in reqbody) {
                 if(curr_guesses.includes(reqbody.guess)) {
                     res.status(400).send('You have already guessed this word');
