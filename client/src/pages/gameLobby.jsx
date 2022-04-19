@@ -47,24 +47,27 @@ export default function GameLobby(props) {
 
   return (
     <div>
-      <h1>GameLobby {id}</h1>
-      <img src="./assets/skrawlpic.png" alt="Homepage" id="FrontImage"></img>
+      <h1>Lobby</h1>
+      <img src="/assets/skrawlpic.png" alt="Homepage" id="FrontImage"></img>
         <div>
-          <span className="lobbycodetext">Your Lobby Code:</span><span id="lobbycode">{id}</span>
+          <span className="lobbycodetext">Your Lobby Code:</span> <span id="lobbycode"> {id}</span>
         </div>
-        <br />
-        <form>
+
+        <div id = "player-container">
+
           {state.map((player,idx) => {
             return (
-              <div key={idx}>
-                <span className="playerlist">{player} </span>
+              <div key={idx} className = "playerlist">
                 <img src="/assets/playericon.png" alt="Player Icon" id="playericon" className="icon"></img>
+                {player}
               </div>
             )
+
           })}
-        </form>
-        <br />
+
+        </div>
         <button type="button" id="make-lobby" onClick={startGame}>Start Game</button>
     </div>
+
   );
 }
