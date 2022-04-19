@@ -9,8 +9,6 @@ let isDrawing; //keeps track of whether or not the player is drawing
 let lineSize = 10;//size of the brush
 let lineColor = "black";//color of the brush
 
-
-
 const colorLabel = document.createElement("label");
 colorLabel.appendChild(document.createTextNode("Color:"))
 let colorSelection = document.createElement("select");
@@ -29,12 +27,6 @@ let sizeSelection = document.createElement("input");
 
 artTools.appendChild(sizeLabel);
 artTools.appendChild(sizeSelection);
-
-
-
-
-
-
 
 canvasElement.addEventListener("mousedown", function(event){
     isDrawing = true;

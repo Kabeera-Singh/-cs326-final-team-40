@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import { Game, GameDraw, GameLobby, GameNew, GameScore } from './pages';
+import { GameGuess, GameDraw, GameLobby, GameNew, GameScore } from './pages';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
@@ -11,9 +11,9 @@ function GameRouter(props) {
     <Router>
       <Routes>
         <Route path="/" element={<App gameComponent={GameNew} />} />
-        <Route path="/:id/" element={<App gameComponent={GameLobby} />} />
-        <Route path="/:id/draw" element={<App gameComponent={GameDraw} />} />
-        <Route path="/:id/play" element={<App gameComponent={Game} />} />
+        <Route path="/:id/:playerid" element={<App gameComponent={GameLobby} />} />
+        <Route path="/:id/:playerid/draw" element={<App gameComponent={GameDraw} />} />
+        <Route path="/:id/:playerid/guess" element={<App gameComponent={GameGuess} />} />
         <Route path="/:id/score" element={<App gameComponent={GameScore} />} />
       </Routes>
     </Router>

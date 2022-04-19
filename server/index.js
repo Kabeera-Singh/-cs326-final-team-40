@@ -110,8 +110,10 @@ app.post('/game/:game_id/join/:player_id', async (req, res) => {
         const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
         const newplayer = {
             canvas: "",
-            guesses: {}
+            guesses: {},
+            myWord: ""
         }
+        newplayer.myWord = random_word;
         game.players[req.params.player_id] = newplayer;
         game.words[req.params.player_id] = random_word;
         await db.write();

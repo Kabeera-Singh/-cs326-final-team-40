@@ -13,17 +13,16 @@
   },
   "scripts": {
     "server": "nodemon server/index.js",
-    "client": "yarn --cwd client start",
-    "clientwin": "yarn --cwd client startwin",
-    "dev": "concurrently \"yarn server\" \"yarn client\""
+    "client": "npm run start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "private": false,
   "dependencies": {
-    "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "express": "^4.17.3",
     "lowdb": "^3.0.0",
-    "nanoid": "^3.3.2"
+    "nanoid": "^3.3.2",
+    "react-devtools": "^4.24.4"
   },
   "devDependencies": {
     "concurrently": "^7.1.0",
