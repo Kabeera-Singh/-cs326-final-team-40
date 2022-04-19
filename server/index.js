@@ -89,7 +89,7 @@ app.post('/newgame', async (req, res, next) => {
 });
 
 // get a specific game by id
-app.get('/game/:game_id', async (req, res) => {
+app.get('/game/:game_id/playerlist', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         res.send(Object.keys(game.players));
@@ -98,32 +98,8 @@ app.get('/game/:game_id', async (req, res) => {
     }
 });
 
-// add a player to a game
-app.post('/game/:game_id/join/:player_id', async (req, res) => {
-    const game = db.data.games.find(game => game.gameID === req.params.game_id);
-    const player = game.players[req.params.player_id];
-    if (player) {
-        res.status(400).send('Player already exists');
-    }
-    else if (game) {
-        // get a random word for this player to draw
-        const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
-        const newplayer = {
-            canvas: "",
-            guesses: {}
-        }
-        newplayer.myWord = random_word;
-        game.players[req.params.player_id] = newplayer;
-        game.words[req.params.player_id] = random_word;
-        await db.write();
-        res.send(newplayer);
-    } else {
-        res.status(404).send('Game not found');
-    }
-});
-
 // get the game state for a specific game id and player id
-app.get('/game/:game_id/player/:player_id', async (req, res) => {
+app.get('/game/:game_id/:player_id', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         const player = Object.assign({}, game.players[req.params.player_id]); // copy the object
@@ -138,8 +114,32 @@ app.get('/game/:game_id/player/:player_id', async (req, res) => {
     }
 });
 
+// add a player to a game
+app.post('/game/:game_id/:player_id/join', async (req, res) => {
+    const game = db.data.games.find(game => game.gameID === req.params.game_id);
+    const player = game.players[req.params.player_id];
+    if (player) {
+        res.status(400).send('Player already exists');
+    }
+    else if (game) {
+        // get a random word for this player to draw
+        const random_word = wordlist[Math.floor(Math.random() * wordlist.length)];
+        const newplayer = {
+            canvas: "",
+            guesses: {}
+        }
+        game.players[req.params.player_id] = newplayer;
+        game.words[req.params.player_id] = random_word;
+        await db.write();
+        newplayer.myWord = random_word;
+        res.send(newplayer);
+    } else {
+        res.status(404).send('Game not found');
+    }
+});
+
 // update the canvas for a specific game id and player id
-app.put('/game/:game_id/player/:player_id/canvas', async (req, res) => {
+app.put('/game/:game_id/:player_id/canvas', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         const player = game.players[req.params.player_id];
@@ -154,6 +154,29 @@ app.put('/game/:game_id/player/:player_id/canvas', async (req, res) => {
         res.status(404).send('Game not found');
     }
 });
+
+// get all canvases + guesses for a specific player
+app.get('/game/:game_id/:guesser_id/guesses', async (req, res) => {
+    const game = db.data.games.find(game => game.gameID == req.params.game_id);
+    if (game) {
+        const guesser = game.players[req.params.guesser_id];
+        if (guesser) {
+            let canvas = Object.assign({}, game.players)
+            Object.keys(canvas).map(player => {
+                let tmp = Object.assign({}, canvas[player]);
+                delete tmp.guesses;
+                tmp.guesses = guesser.guesses[player] || [];
+                canvas[player] = tmp;
+            })
+            res.send(canvas);
+        } else {
+            res.status(404).send('Player not found');
+        }
+    } else {
+        res.status(404).send('Game not found');
+    }
+});
+
 
 /**
  * Example of a POST request

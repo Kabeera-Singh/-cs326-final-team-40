@@ -8,7 +8,7 @@ export default function GameLobby(props) {
   let navigate = useNavigate(); 
 
   async function getPlayerWord(gameid, playerid) {
-    const response = await fetch('http://localhost:3000/game/'+gameid, {
+    const response = await fetch('http://localhost:3000/game/'+gameid+'/playerlist', {
         crossDomain: true,
         method: 'GET'
     }).catch(err => {

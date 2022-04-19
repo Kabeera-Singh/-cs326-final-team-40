@@ -10,7 +10,7 @@ const Canvas = (props) => {
     const [state, setState] = useState({});
 
     async function getPlayerWord(gameid, playerid) {
-        const response = await fetch('http://localhost:3000/game/'+gameid+'/player/'+playerid, {
+        const response = await fetch('http://localhost:3000/game/'+gameid+'/'+playerid, {
             crossDomain: true,
             method: 'GET'
         }).catch(err => {
@@ -24,7 +24,7 @@ const Canvas = (props) => {
 
     async function putCanvas() {
         const canvasData = canvasRef.current.toDataURL();
-        const response = await fetch('http://localhost:3000/game/'+id+'/player/'+playerid +'/canvas', {
+        const response = await fetch('http://localhost:3000/game/'+id+'/'+playerid +'/canvas', {
             crossDomain: true,
             method: 'PUT',
             headers: {

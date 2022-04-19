@@ -1,10 +1,33 @@
+import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import "./styleGame.css";
 
 export default function Game(props) {
+  const { id, playerid } = useParams();
+  const [state, setState] = useState({});
+
+  async function getGameState(gameid, playerid) {
+    const response = await fetch('http://localhost:3000/game/'+gameid+'/'+playerid+'/guesses', {
+      crossDomain: true,
+      method: 'GET'
+    }).catch(err => {
+      // setHasError(true);
+      console.error(err);
+      return
+    });
+    const data = await response.json();
+    console.log(data);
+    setState(data);
+  }
+
+  useEffect(() => {
+    getGameState(id, playerid);
+  }, [id, playerid]);
+
   return (
     <div>
       <h1>GameGuesser</h1>
-      <div class="grid-container" id="allPlayers">
+      <div className="grid-container" id="allPlayers">
         <h3>Player 1:_ _ _ _ _ _</h3>
         <h3>Player 2:_ _ _ _ _ _</h3>
         <h3>Player 3:_ _ _ _ _ _</h3>
@@ -20,7 +43,7 @@ export default function Game(props) {
         <div id="player6"></div>
     </div>
 
-    <div class="scorekeeper" id="scoreboard">
+    <div className="scorekeeper" id="scoreboard">
         <h2>CURRENT SCORES:</h2>
         <p>Player 1: _____</p>
         <p>Player 2: _____</p>
