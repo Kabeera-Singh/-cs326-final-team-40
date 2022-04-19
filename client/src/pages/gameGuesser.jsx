@@ -14,7 +14,7 @@ export default function Game(props) {
     }).then(response => response.json()).then(data => {
       let guessobj = {};
       data.forEach(player => {
-        guessobj[player.player] = player.guesses.at(-1);
+        guessobj[player.player] = player.guesses.at(-1) || "guess";
       });
 
       setState(data);

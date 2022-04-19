@@ -11,7 +11,7 @@ function GameRouter(props) {
     <Router>
       <Routes>
         <Route path="/" element={<App gameComponent={GameNew} />} />
-        <Route path="/:id/:playerid" element={<App gameComponent={GameLobby} />} />
+        <Route path="/:id/:playerid/lobby" element={<App gameComponent={GameLobby} />} />
         <Route path="/:id/:playerid/draw" element={<App gameComponent={GameDraw} />} />
         <Route path="/:id/:playerid/guess" element={<App gameComponent={GameGuess} />} />
         <Route path="/:id/score" element={<App gameComponent={GameScore} />} />

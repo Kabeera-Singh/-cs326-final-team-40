@@ -7,17 +7,20 @@ export default function GameLobby(props) {
   const [state, setState] = useState([]);
   let navigate = useNavigate(); 
 
-  async function getPlayerWord(gameid, playerid) {
-    const response = await fetch('http://localhost:3000/game/'+gameid+'/playerlist', {
-        crossDomain: true,
-        method: 'GET'
+  async function getPlayers(gameid, playerid) {
+    await fetch('http://localhost:3000/game/'+gameid+'/playerlist', {
+      crossDomain: true,
+      method: 'GET'
+    }).then(res => res.json()).then(data => {
+      // if (!(playerid in data)) {
+      //   navigate('/');
+      // }
+      setState(data);
     }).catch(err => {
-        // setHasError(true);
-        console.error(err);
-        return
+      // setHasError(true);
+      console.error(err);
+      return
     });
-    const data = await response.json();
-    setState(data);
   }
 
   async function callStartGame(gameid) {
@@ -39,7 +42,7 @@ export default function GameLobby(props) {
   }
 
   useEffect(() => {
-    getPlayerWord(id, playerid);
+    getPlayers(id, playerid);
   }, [id, playerid]);
 
   return (

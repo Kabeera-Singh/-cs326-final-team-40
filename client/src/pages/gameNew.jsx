@@ -18,7 +18,7 @@ export default function GameNew(props) {
     const data = await response.json();
     setGameId(data.gameID);
     await joinGame(data.gameID, name);
-    navigate('/' + data.gameID + '/' + name);
+    navigate('/' + data.gameID + '/' + name + '/lobby');
   }
 
   async function joinGame(gameID, playerName) {
@@ -38,7 +38,7 @@ export default function GameNew(props) {
       return;
     } else {
       await joinGame(gameId, name);
-      navigate('/' + gameId + '/' + name);
+      navigate('/' + gameId + '/' + name + '/lobby');
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import "./styleDraw.css";
 
 const Canvas = (props) => {
@@ -8,23 +8,24 @@ const Canvas = (props) => {
 
     const { id, playerid } = useParams();
     const [state, setState] = useState({});
+    let navigate = useNavigate();
 
     async function getPlayerWord(gameid, playerid) {
-        const response = await fetch('http://localhost:3000/game/'+gameid+'/'+playerid, {
+        await fetch('http://localhost:3000/game/'+gameid+'/'+playerid, {
             crossDomain: true,
             method: 'GET'
+        }).then(res => res.json()).then(data => {
+            setState(data);
         }).catch(err => {
             // setHasError(true);
             console.error(err);
             return
         });
-        const data = await response.json();
-        setState(data);
     }
 
     async function putCanvas() {
         const canvasData = canvasRef.current.toDataURL();
-        const response = await fetch('http://localhost:3000/game/'+id+'/'+playerid +'/canvas', {
+        await fetch('http://localhost:3000/game/'+id+'/'+playerid +'/canvas', {
             crossDomain: true,
             method: 'PUT',
             headers: {
@@ -33,13 +34,14 @@ const Canvas = (props) => {
             body: JSON.stringify({
                 canvas: canvasData
             }),
+        }).then(res => res.json()).then(data => {
+            console.log(data);
+            navigate('/'+id+'/' + playerid + '/guess');
         }).catch(err => {
             // setHasError(true);
             console.error(err);
             return
         });
-        const data = await response.json();
-        console.log(data);
     }
 
     useEffect(() => {
@@ -70,7 +72,6 @@ const Canvas = (props) => {
 
     const mouseUpHandler = useCallback((event, canvasContext) => {
         // here we just need the context
-        console.log("mouse up")
         setIsDrawing(false);
         canvasContext.closePath();
     }, []);
