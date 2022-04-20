@@ -251,46 +251,49 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     }
 });
 
+
 /**
  * Example of a POST request
- * http://localhost:3000/game/YCMimdY444TBHKc5zArTb/abc/score
+ * http://localhost:3000/game/YCMimdY444TBHKc5zArTb/score
  * 
- * Takes in a game id, and player id and returns a score 
+ * Takes in a game id and returns a score for each player
  * Score Calculation:
  *  - If the player guesses the word, they get a 100 points
  *  - For every wrong guess the player loses 10 points
  */
- app.get('/game/:game_id/:player_id/score', async (req, res) => {
+app.get('/game/:game_id/score', async (req, res) => {
     await db.read();
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
+    let score_lst = [];
     if (game) {
-        const player = game.players[req.params.player_id];
-        let score = 0;
-        if (player) {
-            for (let target of Object.keys(player.guesses)) {
+        //const player = game.players[req.params.player_id];
+        if (game.players == {}) {
+            res.status(404).send('No players in game');
+            return;
+        }
+        for (let player of Object.keys(game.players)) {
+            console.log(player);
+            let score = 0;
+            for (let target of Object.keys(game.players[player].guesses)) {
                 let canvas_score = 0;
-                for (let guess of player.guesses[target]) {
+                for (let guess of game.players[player].guesses[target]) {
                     if (guess !== game.words[target]) {
                         canvas_score -= 10;
                     }
                     else if (guess === game.words[target]) {
-                        canvas_score +=100;
+                        canvas_score += 100;
                         break;
                     }
                 }
                 score += canvas_score;
             }
-            res.send(score.toString());
-        } else {
-            res.status(404).send({
-                "error": 'Player not found'
-            });
+            score_lst.push({"player": player, "score": score}); 
         }
-    } else {
-        res.status(404).send({
-            "error": 'Game not found'
-        });
     }
+    else {
+        res.status(404).send('Game not found');
+    }
+    res.send(score_lst);
 });
 
 // delete the game for a specific game id
