@@ -1,0 +1,3 @@
+[submodule "client"]
+	path = client
+	url = https://rawsh@github.com/rawsh/cs326-final-team-40-web.git
