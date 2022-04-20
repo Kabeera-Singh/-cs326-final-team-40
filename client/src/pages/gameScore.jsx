@@ -8,6 +8,7 @@ export default function GameScore(props) {
     scores: [],
     winner: ""
   });
+  let navigate = useNavigate();
 
   async function getScores(gameid) {
     await fetch('http://localhost:3000/game/'+gameid+'/score', {
@@ -46,7 +47,7 @@ export default function GameScore(props) {
       </div>
 
       <center>
-          <button type="button" id="newgame">New Game</button>
+          <button type="button" id="newgame" onClick={() => navigate('/')}>New Game</button>
       </center>
     </div>
   );
