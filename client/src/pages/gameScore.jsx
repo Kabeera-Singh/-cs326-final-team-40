@@ -3,19 +3,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import "./styleScore.css";
 
 export default function GameScore(props) {
-  const { id, playerid } = useParams();
-  const [state, setState] = useState([]);
-  let navigate = useNavigate(); 
+  const { id } = useParams();
+  const [state, setState] = useState({
+    scores: [],
+    winner: ""
+  });
 
-
-  async function getPlayers(gameid, playerid) {
-    await fetch('http://localhost:3000/game/'+gameid+'/playerlist', {
+  async function getScores(gameid) {
+    await fetch('http://localhost:3000/game/'+gameid+'/score', {
       crossDomain: true,
       method: 'GET'
     }).then(res => res.json()).then(data => {
-      // if (!(playerid in data)) {
-      //   navigate('/');
-      // }
+      console.log(data);
       setState(data);
     }).catch(err => {
       // setHasError(true);
@@ -25,25 +24,25 @@ export default function GameScore(props) {
   }
 
   useEffect(() => {
-    getPlayers(id, playerid);
-  }, [id, playerid]);
+    getScores(id);
+  }, [id]);
   
   return (
     <div>
       <h1>Game Over</h1>
         <div id= "winner-container"> 
           <img src="/assets/profpic2.png" alt="Player Icon" id="winner" />
-          Winner Block
+          Winner: {state.winner}
       </div>
       <div id="player-container">
-      {state.map((player,idx) => {
-            return (
-              <div key={idx} className = "playerlist">
-                <img src="/assets/playericon.png" alt="Player Icon" id="playericon" className="icon"></img>
-                {player} 
-              </div>
-            )
-          })}
+      {state.scores.map((obj,idx) => {
+        return (
+          <div key={idx} className = "playerlist">
+            <img src="/assets/playericon.png" alt="Player Icon" id="playericon" className="icon"></img>
+            {obj.player}: {obj.score}
+          </div>
+        )
+      })}
       </div>
 
       <center>
@@ -51,11 +50,5 @@ export default function GameScore(props) {
       </center>
     </div>
   );
-
-  
-  
-  
-
-
 }
 

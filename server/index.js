@@ -101,7 +101,7 @@ app.get('/game/:game_id/playerlist', async (req, res) => {
 });
 
 // get the game state for a specific game id and player id
-app.get('/game/:game_id/:player_id', async (req, res) => {
+app.get('/game/:game_id/:player_id/word', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     if (game) {
         const player = Object.assign({}, game.players[req.params.player_id]); // copy the object
@@ -266,12 +266,12 @@ app.get('/game/:game_id/score', async (req, res) => {
     const game = db.data.games.find(game => game.gameID == req.params.game_id);
     let score_lst = [];
     if (game) {
-        //const player = game.players[req.params.player_id];
-        if (game.players == {}) {
+        const players = Object.keys(game.players);
+        if (players.length === 0) {
             res.status(404).send('No players in game');
             return;
         }
-        for (let player of Object.keys(game.players)) {
+        for (let player of players) {
             console.log(player);
             let score = 0;
             for (let target of Object.keys(game.players[player].guesses)) {
@@ -289,11 +289,23 @@ app.get('/game/:game_id/score', async (req, res) => {
             }
             score_lst.push({"player": player, "score": score}); 
         }
-    }
-    else {
+        // find player with largest score
+        let max_score = 0;
+        let max_player = players[0];
+        for (let player of score_lst) {
+            if (player.score > max_score) {
+                max_score = player.score;
+                max_player = player.player;
+            }
+        }
+        let myres = {
+            "scores": score_lst,
+            "winner": max_player
+        }
+        res.send(myres);
+    } else {
         res.status(404).send('Game not found');
     }
-    res.send(score_lst);
 });
 
 // delete the game for a specific game id

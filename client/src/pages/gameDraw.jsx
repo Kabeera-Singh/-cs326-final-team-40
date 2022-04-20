@@ -11,7 +11,7 @@ const Canvas = (props) => {
     let navigate = useNavigate();
 
     async function getPlayerWord(gameid, playerid) {
-        await fetch('http://localhost:3000/game/'+gameid+'/'+playerid, {
+        await fetch('http://localhost:3000/game/'+gameid+'/'+playerid +'/word', {
             crossDomain: true,
             method: 'GET'
         }).then(res => res.json()).then(data => {
