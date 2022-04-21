@@ -88,8 +88,13 @@ DELETE:
 
 ## Part 2 - Screenshots and CRUD
 
+The starting page of the game. Each player must enter their name and click the "Start Game" button or paste a game ID into the text box and click join.
 ![Homepage](Homepage.png)
+Before the game starts, all players are put into a lobby page in which they can see the current players in the game. From here they can click the "Start Game" button to start the game.
 ![Lobby Page](Lobby_Page.png)
+The Drawing Screen is where players can draw on the canvas. They will be given a word to draw, and click commit, which will save the drawing to the database. and take them to the next screen.
 ![Drawing Screen](Drawing_Screen.png)
+In the guessing screen each player can then guess what the other players have drawn and if they get it correct, they will get 100 points, but for each wrong guess, they will lose 10 points.
 ![Guessing SCreen](Guessing_Screen.png)
+The score screen shows who won the game, and also shows the score for each player.
 ![Score Screen](Score_Screen.png)
