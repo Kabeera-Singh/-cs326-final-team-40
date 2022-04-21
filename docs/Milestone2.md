@@ -100,4 +100,4 @@ The score screen shows who won the game, and also shows the score for each playe
 ![Score Screen](Score_Screen.png)
 
 ### Heroku URL
-<https://cs326-final-team40.herokuapp.com>
+<https://cs326-final-team40-web.herokuapp.com/>
