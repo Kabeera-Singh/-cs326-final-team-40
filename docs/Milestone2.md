@@ -2,13 +2,13 @@
 
 ## Division of Labor
 
-Kabeera Singh - Kabeera-Singh : Worked on API endpoints and database.
+Kabeera Singh - Kabeera-Singh : Worked on API endpoints, database, and heroku.
 
 Brandon O'Brien Jones - bobrienjones : Frontend - Homepage, Lobby, Endgame Screen
 
 Robert Washbourne - rawsh : Worked on API, setting up node, and connection to frontend.
 
-Anthony Marcone - antchamp : Worked on Game Screen: Drawing and Game Screen: Guessing.
+Anthony Marcone - antchamp : Worked on Game Screen: Drawing, Game Screen: Guessing, and heroku.
 
 ## Part 0 - API
 
