@@ -2,13 +2,13 @@
 
 ## Division of Labor
 
-Kabeera Singh - Kabeera-Singh : Worked on API
+Kabeera Singh - Kabeera-Singh : Worked on API endpoints and database.
 
 Brandon O'Brien Jones - bobrienjones : Frontend - Homepage, Lobby, Endgame Screen
 
-Robert Washbourne - rawsh : Worked on API
+Robert Washbourne - rawsh : Worked on API, setting up node, and connection to frontend.
 
-Anthony Marcone - antchamp : Worked on Game Screen: Drawing and Game Screen: Guessing
+Anthony Marcone - antchamp : Worked on Game Screen: Drawing and Game Screen: Guessing.
 
 ## Part 0 - API
 
@@ -22,67 +22,74 @@ Score: Score for each player
 
 ### Operations
 
-GET:
-    Game_ID
-        Player_ID
-            Canvas
-            Guesses
-            Score
-
-POST:
-    Game_ID
-        Player_ID
-            Canvas
-            Guesses
-            Score
-
+Post:
+    New Game:
+        Creates a new game and returns the game_id
+    New Player:
+        Creates a new player and returns the player_id
 PUT:
-    Canvas
-    Guesses
-    Score
-
+    Update Canvas:
+        Updates the canvas for the player
+    Update Guesses:
+        Updates the guesses for the player
+GET:
+    Get Game:
+        Returns the game by ID
+    Get Player:
+        Returns the game state for a player
+    Get Words:
+        Returns the words for the player
+    Get Score:
+        Returns the score for all players, and also returns the winner
 DELETE:
-    Game_ID
-        Player_ID
-            Canvas
-            Guesses
-            Score
+    Delete Game:
+        Deletes the game by ID
 
 ### Example database
 
-```
+```javascript
 
 {
-    "Players":
-    [
-        {"Player_23":
-            [
-                {"Game_ID":1239jfiweoj},
-                {"Canvas":canvas.png},
-                {"Score":21}
-            ]
+    games: [
+        {
+            game_id: 1,
+            players: {
+                "player_1": {
+                    "canvas": (png to string),
+                    "guesses": [
+                        {"abc": ["cat","dog","mouse"]},
+                        {"def": ["cheese","apple","potato"]}
+                    ], 
+                }
+                "player_2": {
+                    "canvas": (png to string),
+                    "guesses": [
+                        {"abc": ["cat","dog","mouse"]},
+                        {"def": ["cheese","apple","potato"]}
+                    ], 
+                }
+                "abc": {
+                    "canvas": (png to string),
+                    "guesses": [
+                        {"player_1": ["cat","dog","mouse"]},
+                        {"def": ["cheese","apple","potato"]}
+                    ], 
+                }
+            }
+            words: {
+        billu1: "tangerine",
+        billu2: "river",
+        billu3: "space suit"
+      }
         },
-        {"Player_24":
-            [
-            {"Game_ID":1239jfiweoj},
-            {"Guesses":["Guess1","Guess2"...]},
-            {"Score":21}
-            ]
-        }
-    ],
-    "Game":
-    [
-        {"1239jfiweoj":
-        [
-            {"Guesser": "Player_3"},
-            {"Drawers": [(list of player ID's)]}
-        ]
-        
-        }
     ]
-
 }
 ```
 
 ## Part 2 - Screenshots and CRUD
 
+![Homepage](Homepage.png)
+![Lobby Page](Lobby_Page.png)
+![Drawing Screen](Drawing_Screen.png)
+![Guessing SCreen](Guessing_Screen.png)
+![Score Screen](Score_Screen.png)
