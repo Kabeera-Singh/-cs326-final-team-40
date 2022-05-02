@@ -96,9 +96,11 @@ app.post('/newgame', async (req, res, next) => {
     // } catch (error) {
     //     return next(error);
     // }
-    query('INSERT INTO game (gameguid) VALUES ($1)', [nanoid()]).then(pgres => {
-        console.log(pgres);
-        res.send(pgres.rows);
+    const myid = nanoid();
+    query('INSERT INTO game (gameguid) VALUES ($1)', [myid]).then(pgres => {
+        res.send({
+            gameID: myid,
+        });
     }).catch(err => {
         console.log(err);
         next(err);
