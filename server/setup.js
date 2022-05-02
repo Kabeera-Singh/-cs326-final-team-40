@@ -13,7 +13,7 @@ const pool = new Pool({
 pool.query(`DROP TABLE IF EXISTS game;`).then(() => {
     pool.query("CREATE TABLE game(gameguid UUID NOT NULL)").then(() => {
         pool.query(`DROP TABLE IF EXISTS player;`).then(() => {
-            pool.query("CREATE TABLE player(playerguid UUID NOT NULL, belongs_to UUID NOT NULL)").then(() => {
+            pool.query("CREATE TABLE player(playerguid UUID NOT NULL, belongs_to UUID NOT NULL, word varchar(50) NOT NULL)").then(() => {
                 pool.end();
             });
         });
