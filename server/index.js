@@ -1,28 +1,33 @@
-import { nanoid } from 'nanoid'
+import express from 'express'
+import bodyParser from 'body-parser'
+import cors from 'cors'
+
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { Low, JSONFile } from 'lowdb'
+import { nanoid } from 'nanoid'
 import { readFile } from 'fs'
-import express from 'express'
-import cors from 'cors'
-import bodyParser from 'body-parser'
+import { query } from './db.js'
 
-// Use JSON file for storage
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const file = join(__dirname, 'db.json')
-const adapter = new JSONFile(file)
-const db = new Low(adapter)
+// old json db
+// import { join, dirname } from 'path'
+// import { Low, JSONFile } from 'lowdb'
+
+// // Use JSON file for storage
+// const file = join(__dirname, 'db.json')
+// const adapter = new JSONFile(file)
+// const db = new Low(adapter)
+// // set default data
+// await db.read();
+// db.data ||= { games: [] }
+
 
 // read the wordlist from the file
 let wordlist;
+const __dirname = dirname(fileURLToPath(import.meta.url));
 readFile(join(__dirname, 'wordlist.json'), (err, data) => {
     if (err) throw err;
     wordlist = JSON.parse(data);
 });
-
-// set default data
-await db.read();
-db.data ||= { games: [] }
 
 // express server
 const app = express();
