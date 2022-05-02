@@ -76,21 +76,33 @@ app.use(function (req, res, next) {
 //             Guesses
 //             Score
 
+app.get('/games', async (req, res) => {
+    const games = await query('SELECT * FROM game');
+    res.send(games.rows);
+});
+
 // create a new game
 app.post('/newgame', async (req, res, next) => {
     // create ids for the game and start players empty
-    const newgame = {
-        gameID: nanoid(),
-        players: {},
-        words: {},
-    }
-    try {
-        db.data.games.push(newgame);
-        await db.write();
-        res.send(newgame);
-    } catch (error) {
-        return next(error);
-    }
+    // const newgame = {
+    //     gameID: nanoid(),
+    //     players: {},
+    //     words: {},
+    // }
+    // try {
+    //     db.data.games.push(newgame);
+    //     await db.write();
+    //     res.send(newgame);
+    // } catch (error) {
+    //     return next(error);
+    // }
+    query('INSERT INTO game (gameguid) VALUES ($1)', [nanoid()]).then(pgres => {
+        console.log(pgres);
+        res.send(pgres.rows);
+    }).catch(err => {
+        console.log(err);
+        next(err);
+    });
 });
 
 // get a specific game by id
