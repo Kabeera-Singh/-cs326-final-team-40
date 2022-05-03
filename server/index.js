@@ -314,10 +314,11 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
  *  - If the player guesses the word, they get a 100 points
  *  - For every wrong guess the player loses 10 points
  */
+
 app.get('/game/:game_id/score', async (req, res) => {
-    await db.read();
-    const game = db.data.games.find(game => game.gameID == req.params.game_id);
     let score_lst = [];
+
+
     if (game) {
         const players = Object.keys(game.players);
         if (players.length === 0) {
@@ -359,6 +360,59 @@ app.get('/game/:game_id/score', async (req, res) => {
     } else {
         res.status(404).send('Game not found');
     }
+});
+
+app.get('/game/:game_id/score', async (req, res) => {
+    let score_lst = [];
+    getGame(req.params.game_id).then(pgres => {
+        if (pgres.rowCount === 0) {
+            throw new Error('Game not found');
+        }
+        getAllPlayers(req.params.game_id).then(pgres => {
+            if (pgres.rowCount === 0) {
+                throw new Error('No players in game');
+            }
+            for (let player of pgres.rows) {
+                let score = 0;
+                for (let target of player.guesses) {
+                    let canvas_score = 0;
+                    for (let guess of target) {
+                        if (guess !== player.word) {
+                            canvas_score -= 10;
+                        }
+                        else if (guess === player.word) {
+                            canvas_score += 100;
+                            break;
+                        }
+                    }
+                    score += canvas_score;
+                }
+                score_lst.push({"player": player.name, "score": score}); 
+            }
+            // find player with largest score
+            let max_score = 0;
+            let max_player = score_lst[0].player;
+            for (let player of score_lst) {
+                if (player.score > max_score) {
+                    max_score = player.score;
+                    max_player = player.player;
+                }
+            }
+            let myres = {
+                "scores": score_lst,
+                "winner": max_player
+            }
+            res.send(myres);
+        }).catch(err => {
+            res.send({
+                "error": err.message
+            });
+        });
+    }).catch(err => {
+        res.status(404).send({
+            "error": err.message
+        });
+    });
 });
 
 // delete the game for a specific game id
