@@ -12,6 +12,7 @@
     "node": ">=16.0.0"
   },
   "scripts": {
+    "start": "node server/index.js",
     "server": "nodemon server/index.js",
     "setup": "node server/setup.js",
     "client": "yarn --cwd client/ dev",
