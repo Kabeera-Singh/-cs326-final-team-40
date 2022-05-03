@@ -63,11 +63,6 @@ app.use(function (req, res, next) {
 //             Guesses
 //             Score
 
-app.get('/games', async (req, res) => {
-    const games = await query('SELECT * FROM game');
-    res.send(games.rows);
-});
-
 // create a new game
 app.post('/newgame', async (req, res) => {
     const myid = nanoid();
