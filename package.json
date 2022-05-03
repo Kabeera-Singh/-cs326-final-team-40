@@ -15,7 +15,6 @@
     "start": "node server/index.js",
     "server": "nodemon server/index.js",
     "setup": "node server/setup.js",
-    "build": "cd client && react-scripts build",
     "client": "yarn --cwd client/ dev",
     "clientwin": "npm run start --prefix client",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
