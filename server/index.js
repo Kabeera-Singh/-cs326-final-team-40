@@ -87,7 +87,8 @@ function getGamePlayers(gameID) {
 }
 
 function getAllPlayers(gameID) {
-    return queryPromise('SELECT * FROM player WHERE belongs_to = $1', [gameID]);
+    // get all players for a game ordered by name
+    return queryPromise('SELECT * FROM player WHERE belongs_to = $1 ORDER BY name', [gameID]);
 }
 
 function getPlayer(gameID, playerID) {
@@ -215,7 +216,6 @@ app.get('/game/:game_id/:guesser_id/guesses', async (req, res) => {
                 throw new Error('Player not found');
             }
             const playerguesses = pgres.rows[0].guesses;
-            console.log(playerguesses);
             getAllPlayers(req.params.game_id).then(pgres => {
                 res.send(pgres.rows.map(row => {
                     // todo: correct
@@ -281,9 +281,7 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
                     return;
                 }
                 curr[req.params.player_id].push(req.body.guess);
-                console.log(curr);
                 queryPromise('UPDATE player SET guesses = $1 WHERE (name = $2 AND belongs_to = $3)', [curr, req.params.guesser_id, req.params.game_id]).then(pgres => {
-                    console.log(pgres);
                     res.send({
                         "success": true
                     });
@@ -312,7 +310,6 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
 
 
 app.get('/game/:game_id/score', async (req, res) => {
-    let score_lst = [];
     getGame(req.params.game_id).then(pgres => {
         if (pgres.rowCount === 0) {
             throw new Error('Game not found');
@@ -321,23 +318,33 @@ app.get('/game/:game_id/score', async (req, res) => {
             if (pgres.rowCount === 0) {
                 throw new Error('No players in game');
             }
-            for (let player of pgres.rows) {
-                let score = 0;
-                for (let target of player.guesses) {
-                    let canvas_score = 0;
-                    for (let guess of target) {
-                        if (guess !== player.word) {
-                            canvas_score -= 10;
-                        }
-                        else if (guess === player.word) {
-                            canvas_score += 100;
-                            break;
+            let scores = {}
+            for (let target of pgres.rows) {
+                for (let guesser of pgres.rows) {
+                    if (guesser.name == target.name) {
+                        continue;
+                    }
+                    if (scores[target.name] === undefined) {
+                        scores[target.name] = 0;
+                    }
+                    for (let guess of guesser.guesses[target.name]) {
+                        if (target.word !== guess) {
+                            scores[target.name] -= 10;
+                        } else {
+                            scores[target.name] += 100;
                         }
                     }
-                    score += canvas_score;
                 }
-                score_lst.push({"player": player.name, "score": score}); 
             }
+
+            let score_lst = [];
+            for (let player of pgres.rows) {
+                score_lst.push({
+                    player: player.name,
+                    score: scores[player.name]
+                });
+            }
+            
             // find player with largest score
             let max_score = 0;
             let max_player = score_lst[0].player;
