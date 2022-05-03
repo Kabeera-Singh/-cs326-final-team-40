@@ -56,6 +56,7 @@ postgres database, players have a attribute belongs_to to link to a game.
     players: [
         {
             playerguid: "VWxQ1IdVqG438UJbh9V0N",
+            belongs_to: "iwQbLzGLJPc1agMN5_N8_",
             name: "The Zuck",
             canvas: "",
             guesses: [{
