@@ -336,11 +336,13 @@ app.get('/game/:game_id/score', async (req, res) => {
                     if (scores[target.name] === undefined) {
                         scores[target.name] = 0;
                     }
-                    for (let guess of guesser.guesses[target.name]) {
-                        if (target.word !== guess) {
-                            scores[target.name] -= 10;
-                        } else {
-                            scores[target.name] += 100;
+                    if (guesser.guesses[target.name]) {
+                        for (let guess of guesser.guesses[target.name]) {
+                            if (target.word !== guess) {
+                                scores[target.name] -= 10;
+                            } else {
+                                scores[target.name] += 100;
+                            }
                         }
                     }
                 }
@@ -355,7 +357,7 @@ app.get('/game/:game_id/score', async (req, res) => {
             }
             
             // find player with largest score
-            let max_score = 0;
+            let max_score = -100;
             let max_player = score_lst[0].player;
             for (let player of score_lst) {
                 if (player.score > max_score) {
