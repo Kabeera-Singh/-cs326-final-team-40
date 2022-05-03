@@ -8,19 +8,6 @@ import { nanoid } from 'nanoid'
 import { readFile } from 'fs'
 import { queryPromise } from './db.js'
 
-// old json db
-// import { join, dirname } from 'path'
-// import { Low, JSONFile } from 'lowdb'
-
-// // Use JSON file for storage
-// const file = join(__dirname, 'db.json')
-// const adapter = new JSONFile(file)
-// const db = new Low(adapter)
-// // set default data
-// await db.read();
-// db.data ||= { games: [] }
-
-
 // read the wordlist from the file
 let wordlist;
 const __dirname = dirname(fileURLToPath(import.meta.url));
