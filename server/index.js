@@ -214,14 +214,17 @@ app.get('/game/:game_id/:guesser_id/guesses', async (req, res) => {
             if (pgres.rowCount === 0) {
                 throw new Error('Player not found');
             }
-            const playerword = pgres.rows[0].word;
+            const playerguesses = pgres.rows[0].guesses;
+            console.log(playerguesses);
             getAllPlayers(req.params.game_id).then(pgres => {
                 res.send(pgres.rows.map(row => {
+                    // todo: correct
+                    const guessesforplayer = playerguesses[row.name] || [];
                     return {
                         player: row.name,
                         canvas: row.canvas,
-                        guesses: row.guesses,
-                        correct: row.guesses.at(-1) == playerword
+                        guesses: guessesforplayer,
+                        correct: guessesforplayer.at(-1) === row.word
                     };
                 }));
             }).catch(err => {
@@ -267,13 +270,20 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
                 throw new Error('Guesser not found');
             }
             if ("guess" in req.body) {
-                if(pgres.rows[0].guesses.includes(req.body.guess)) {
+                let curr = pgres.rows[0].guesses;
+                if (curr[req.params.player_id] === undefined) {
+                    curr[req.params.player_id] = [];
+                }
+                if (curr[req.params.player_id].includes(req.body.guess)) {
                     res.status(400).send({
-                        "error": 'You have already guessed this word'
+                        "error": 'You already guessed this word'
                     });
                     return;
                 }
-                queryPromise('UPDATE player SET guesses = array_append(guesses, $1) WHERE (name = $2 AND belongs_to = $3)', [req.body.guess, req.params.player_id, req.params.game_id]).then(pgres => {
+                curr[req.params.player_id].push(req.body.guess);
+                console.log(curr);
+                queryPromise('UPDATE player SET guesses = $1 WHERE (name = $2 AND belongs_to = $3)', [curr, req.params.guesser_id, req.params.game_id]).then(pgres => {
+                    console.log(pgres);
                     res.send({
                         "success": true
                     });
