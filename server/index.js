@@ -318,7 +318,6 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     });
 });
 
-
 /**
  * Example of a POST request
  * http://localhost:3000/game/YCMimdY444TBHKc5zArTb/score
