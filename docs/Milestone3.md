@@ -2,7 +2,7 @@
 
 ## Division of Labor
 
-Robert Washbourne - rawsh: Worked on adding Postgres to Heroku & init script, db.js connection with rollback and commit, refactoring the backend with SQL queries and promises
+Robert Washbourne - rawsh: Worked on adding Postgres to Heroku & init script, connection to database with rollback and commit, refactoring the backend with SQL queries and promises
 
 ## Part 0 - API
 
@@ -40,3 +40,44 @@ DELETE:
     Delete Game (game_id):
         Deletes the game by ID
 ```
+
+### Example database
+
+postgres database, players have a attribute belongs_to to link to a game.
+
+```javascript
+{
+    games: [
+        {
+            gameguid: "iwQbLzGLJPc1agMN5_N8_"
+        },
+        ...
+    ],
+    players: [
+        {
+            playerguid: "VWxQ1IdVqG438UJbh9V0N",
+            name: "The Zuck",
+            canvas: "",
+            guesses: [{
+                "player2": ["anvil", ...]
+            }]
+        },
+    ]
+}
+```
+
+## Part 2 - Screenshots and CRUD
+
+The starting page of the game. Each player must enter their name and click the "Start Game" button or paste a game ID into the text box and click join.
+![Homepage](Homepage.png)
+Before the game starts, all players are put into a lobby page in which they can see the current players in the game. From here they can click the "Start Game" button to start the game.
+![Lobby Page](Lobby_Page.png)
+The Drawing Screen is where players can draw on the canvas. They will be given a word to draw, and click commit, which will save the drawing to the database. and take them to the next screen.
+![Drawing Screen](Drawing_Screen.png)
+In the guessing screen each player can then guess what the other players have drawn and if they get it correct, they will get 100 points, but for each wrong guess, they will lose 10 points.
+![Guessing SCreen](Guessing_Screen.png)
+The score screen shows who won the game, and also shows the score for each player.
+![Score Screen](Score_Screen.png)
+
+### Heroku URL
+<https://cs326-final-team40-web.herokuapp.com/>
