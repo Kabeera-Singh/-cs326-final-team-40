@@ -14,7 +14,7 @@
   "scripts": {
     "server": "nodemon server/index.js",
     "setup": "node server/setup.js",
-    "client": "yarn --cwd client/ start",
+    "client": "yarn --cwd client/ dev",
     "clientwin": "npm run start --prefix client",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "devwin": "concurrently \"npm run server\" \"npm run clientwin\""
