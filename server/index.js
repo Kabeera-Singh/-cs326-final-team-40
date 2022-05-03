@@ -300,61 +300,106 @@ app.put('/game/:game_id/:guesser_id/guess/:player_id', async (req, res) => {
     });
 });
 
-/**
- * Example of a POST request
- * http://localhost:3000/game/YCMimdY444TBHKc5zArTb/score
- * 
- * Takes in a game id and returns a score for each player
- * Score Calculation:
- *  - If the player guesses the word, they get a 100 points
- *  - For every wrong guess the player loses 10 points
- */
+
 app.get('/game/:game_id/score', async (req, res) => {
-    await db.read();
-    const game = db.data.games.find(game => game.gameID == req.params.game_id);
     let score_lst = [];
-    if (game) {
-        const players = Object.keys(game.players);
-        if (players.length === 0) {
-            res.status(404).send('No players in game');
-            return;
+    getGame(req.params.game_id).then(pgres => {
+        if (pgres.rowCount === 0) {
+            throw new Error('Game not found');
         }
-        for (let player of players) {
-            console.log(player);
-            let score = 0;
-            for (let target of Object.keys(game.players[player].guesses)) {
-                let canvas_score = 0;
-                for (let guess of game.players[player].guesses[target]) {
-                    if (guess !== game.words[target]) {
-                        canvas_score -= 10;
+        getAllPlayers(req.params.game_id).then(pgres => {
+            if (pgres.rowCount === 0) {
+                throw new Error('No players in game');
+            }
+            for (let player of pgres.rows) {
+                let score = 0;
+                for (let target of player.guesses) {
+                    let canvas_score = 0;
+                    for (let guess of target) {
+                        if (guess !== player.word) {
+                            canvas_score -= 10;
+                        }
+                        else if (guess === player.word) {
+                            canvas_score += 100;
+                            break;
+                        }
                     }
-                    else if (guess === game.words[target]) {
-                        canvas_score += 100;
-                        break;
-                    }
+                    score += canvas_score;
                 }
-                score += canvas_score;
+                score_lst.push({"player": player.name, "score": score}); 
             }
-            score_lst.push({"player": player, "score": score}); 
-        }
-        // find player with largest score
-        let max_score = 0;
-        let max_player = players[0];
-        for (let player of score_lst) {
-            if (player.score > max_score) {
-                max_score = player.score;
-                max_player = player.player;
+            // find player with largest score
+            let max_score = 0;
+            let max_player = score_lst[0].player;
+            for (let player of score_lst) {
+                if (player.score > max_score) {
+                    max_score = player.score;
+                    max_player = player.player;
+                }
             }
-        }
-        let myres = {
-            "scores": score_lst,
-            "winner": max_player
-        }
-        res.send(myres);
-    } else {
-        res.status(404).send('Game not found');
-    }
+            let myres = {
+                "scores": score_lst,
+                "winner": max_player
+            }
+            res.send(myres);
+        }).catch(err => {
+            res.send({
+                "error": err.message
+            });
+        });
+    }).catch(err => {
+        res.status(404).send({
+            "error": err.message
+        });
+    });
 });
+
+// app.get('/game/:game_id/score', async (req, res) => {
+//     await db.read();
+//     const game = db.data.games.find(game => game.gameID == req.params.game_id);
+//     let score_lst = [];
+//     if (game) {
+//         const players = Object.keys(game.players);
+//         if (players.length === 0) {
+//             res.status(404).send('No players in game');
+//             return;
+//         }
+//         for (let player of players) {
+//             console.log(player);
+//             let score = 0;
+//             for (let target of Object.keys(game.players[player].guesses)) {
+//                 let canvas_score = 0;
+//                 for (let guess of game.players[player].guesses[target]) {
+//                     if (guess !== game.words[target]) {
+//                         canvas_score -= 10;
+//                     }
+//                     else if (guess === game.words[target]) {
+//                         canvas_score += 100;
+//                         break;
+//                     }
+//                 }
+//                 score += canvas_score;
+//             }
+//             score_lst.push({"player": player, "score": score}); 
+//         }
+//         // find player with largest score
+//         let max_score = 0;
+//         let max_player = players[0];
+//         for (let player of score_lst) {
+//             if (player.score > max_score) {
+//                 max_score = player.score;
+//                 max_player = player.player;
+//             }
+//         }
+//         let myres = {
+//             "scores": score_lst,
+//             "winner": max_player
+//         }
+//         res.send(myres);
+//     } else {
+//         res.status(404).send('Game not found');
+//     }
+// });
 
 // delete the game for a specific game id
 app.delete('/game/:game_id', (req, res) => {
