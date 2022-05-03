@@ -19,12 +19,16 @@ readFile(join(__dirname, 'wordlist.json'), (err, data) => {
 // express server
 const app = express();
 const port = process.env.PORT || 3000;
-app.use(express.static('public'));
+const client_path = join(__dirname, "..", 'client/build');
+
+// express middleware
 app.use(cors());
+app.use(express.static(client_path));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use(function (req, res, next) {
+// cors headers
+app.use("/game/*", function (req, res, next) {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
@@ -32,6 +36,22 @@ app.use(function (req, res, next) {
     res.setHeader('Access-Control-Allow-Credentials', true);
     next();
 });
+
+// postgres helper functions
+// see db.js for more info
+function getGame(gameID) {
+    return queryPromise('SELECT * FROM game WHERE gameguid = $1', [gameID]);
+}
+
+function getAllPlayers(gameID) {
+    // get all players for a game ordered by name
+    return queryPromise('SELECT * FROM player WHERE belongs_to = $1 ORDER BY name', [gameID]);
+}
+
+function getPlayer(gameID, playerID) {
+    return queryPromise('SELECT * FROM player WHERE (name = $1 AND belongs_to = $2)', [playerID, gameID]);
+}
+
 
 // later: use socket.io for the realtime connection
 // ### Operations
@@ -63,6 +83,7 @@ app.use(function (req, res, next) {
 //             Guesses
 //             Score
 
+
 // create a new game
 app.post('/newgame', async (req, res) => {
     const myid = nanoid();
@@ -78,30 +99,13 @@ app.post('/newgame', async (req, res) => {
     });
 });
 
-function getGame(gameID) {
-    return queryPromise('SELECT * FROM game WHERE gameguid = $1', [gameID]);
-}
-
-function getGamePlayers(gameID) {
-    return queryPromise('SELECT * FROM player WHERE belongs_to = $1', [gameID]);
-}
-
-function getAllPlayers(gameID) {
-    // get all players for a game ordered by name
-    return queryPromise('SELECT * FROM player WHERE belongs_to = $1 ORDER BY name', [gameID]);
-}
-
-function getPlayer(gameID, playerID) {
-    return queryPromise('SELECT * FROM player WHERE (name = $1 AND belongs_to = $2)', [playerID, gameID]);
-}
-
 // get a specific game by id
 app.get('/game/:game_id/playerlist', async (req, res) => {
     getGame(req.params.game_id).then(pgres => {
         if (pgres.rowCount === 0) {
             throw new Error('Game not found');
         }
-        getGamePlayers(req.params.game_id).then(pgres => {
+        getAllPlayers(req.params.game_id).then(pgres => {
             res.send(pgres.rows.map(row => {
                 return row.name;
             }));
@@ -371,53 +375,6 @@ app.get('/game/:game_id/score', async (req, res) => {
     });
 });
 
-// app.get('/game/:game_id/score', async (req, res) => {
-//     await db.read();
-//     const game = db.data.games.find(game => game.gameID == req.params.game_id);
-//     let score_lst = [];
-//     if (game) {
-//         const players = Object.keys(game.players);
-//         if (players.length === 0) {
-//             res.status(404).send('No players in game');
-//             return;
-//         }
-//         for (let player of players) {
-//             console.log(player);
-//             let score = 0;
-//             for (let target of Object.keys(game.players[player].guesses)) {
-//                 let canvas_score = 0;
-//                 for (let guess of game.players[player].guesses[target]) {
-//                     if (guess !== game.words[target]) {
-//                         canvas_score -= 10;
-//                     }
-//                     else if (guess === game.words[target]) {
-//                         canvas_score += 100;
-//                         break;
-//                     }
-//                 }
-//                 score += canvas_score;
-//             }
-//             score_lst.push({"player": player, "score": score}); 
-//         }
-//         // find player with largest score
-//         let max_score = 0;
-//         let max_player = players[0];
-//         for (let player of score_lst) {
-//             if (player.score > max_score) {
-//                 max_score = player.score;
-//                 max_player = player.player;
-//             }
-//         }
-//         let myres = {
-//             "scores": score_lst,
-//             "winner": max_player
-//         }
-//         res.send(myres);
-//     } else {
-//         res.status(404).send('Game not found');
-//     }
-// });
-
 // delete the game for a specific game id
 app.delete('/game/:game_id', (req, res) => {
     getGame(req.params.game_id).then(pgres => {
@@ -440,8 +397,13 @@ app.delete('/game/:game_id', (req, res) => {
     });
 });
 
+app.get(["/:game_id/:player_id/(|lobby|draw|guess)", "/:game_id/score"], (req, res) => {
+    res.sendFile(join(client_path, 'index.html'));
+});
+
 // doesnt match any route
 app.use((req, res) => {
+    // res.sendFile(join(client_path, 'index.html'));
     res.status(404).send({
         "error": 'Not found'
     });
