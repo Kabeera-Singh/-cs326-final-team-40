@@ -1,6 +1,9 @@
 {
   "name": "team40final",
   "version": "1.0.0",
+  "workspaces": [
+    "client"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Kabeera-Singh/-cs326-final-team-40.git"
@@ -15,13 +18,13 @@
     "start": "node server/index.js",
     "server": "nodemon server/index.js",
     "setup": "node server/setup.js",
-    "build": "yarn --cwd client/ build",
+    "build": "cd client && react-scripts build",
     "client": "yarn --cwd client/ dev",
     "clientwin": "npm run start --prefix client",
     "dev": "concurrently \"yarn run server\" \"yarn run client\"",
     "devwin": "concurrently \"npm run server\" \"npm run clientwin\""
   },
-  "private": false,
+  "private": true,
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
