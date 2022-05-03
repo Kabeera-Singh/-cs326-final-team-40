@@ -6,7 +6,7 @@ import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { nanoid } from 'nanoid'
 import { readFile } from 'fs'
-import { query } from './db.js'
+import { queryPromise } from './db.js'
 
 // old json db
 // import { join, dirname } from 'path'
@@ -82,65 +82,112 @@ app.get('/games', async (req, res) => {
 });
 
 // create a new game
-app.post('/newgame', async (req, res, next) => {
-    // create ids for the game and start players empty
-    // const newgame = {
-    //     gameID: nanoid(),
-    //     players: {},
-    //     words: {},
-    // }
-    // try {
-    //     db.data.games.push(newgame);
-    //     await db.write();
-    //     res.send(newgame);
-    // } catch (error) {
-    //     return next(error);
-    // }
+app.post('/newgame', async (req, res) => {
     const myid = nanoid();
-    query('INSERT INTO game (gameguid) VALUES ($1)', [myid]).then(pgres => {
+    queryPromise('INSERT INTO game (gameguid) VALUES ($1)', [myid]).then(pgres => {
         res.send({
             gameID: myid,
         });
     }).catch(err => {
         console.log(err);
-        next(err);
+        res.send({
+            "error": err.message
+        });
     });
 });
 
+function getGame(gameID) {
+    return queryPromise('SELECT * FROM game WHERE gameguid = $1', [gameID]);
+}
+
+function getGamePlayers(gameID) {
+    return queryPromise('SELECT * FROM player WHERE belongs_to = $1', [gameID]);
+}
+
+function getPlayer(gameID, playerID) {
+    return queryPromise('SELECT * FROM player WHERE (playerguid = $1 AND belongs_to = $2)', [playerID, gameID]);
+}
+
 // get a specific game by id
 app.get('/game/:game_id/playerlist', async (req, res) => {
-    const game = db.data.games.find(game => game.gameID == req.params.game_id);
-    if (game) {
-        res.send(Object.keys(game.players));
-    } else {
-        res.status(404).send({
-            "error": 'Game not found'
+    getGame(req.params.game_id).then(pgres => {
+        if (pgres.rowCount === 0) {
+            throw new Error('Game not found');
+        }
+        getGamePlayers(req.params.game_id).then(pgres => {
+            res.send(pgres.rows.map(row => {
+                return row.playerguid;
+            }));
+        }).catch(err => {
+            console.log(err);
+            res.status(404).send({
+                "error": err.message
+            });
         });
-    }
+    }).catch(err => {
+        res.status(404).send({
+            "error": err.message
+        });
+    });
 });
 
 // get the game state for a specific game id and player id
 app.get('/game/:game_id/:player_id/word', async (req, res) => {
-    const game = db.data.games.find(game => game.gameID == req.params.game_id);
-    if (game) {
-        const player = Object.assign({}, game.players[req.params.player_id]); // copy the object
-        if (player) {
-            player.myWord = game.words[req.params.player_id];
-            res.send(player);
-        } else {
-            res.status(404).send({
-                "error": 'Player not found'
-            });
+    getGame(req.params.game_id).then(pgres => {
+        if (pgres.rowCount === 0) {
+            throw new Error('Game not found');
         }
-    } else {
-        res.status(404).send({
-            "error": 'Game not found'
+        getPlayer(req.params.game_id, req.params.player_id).then(pgres => {
+            if (pgres.rowCount === 0) {
+                throw new Error('Player not found');
+            }
+            res.send(pgres.rows);
+        }).catch(err => {
+            res.status(404).send({
+                "error": err.message
+            });
         });
-    }
+    }).catch(err => {
+        res.status(404).send({
+            "error": err.message
+        });
+    });
 });
 
 // add a player to a game
 app.post('/game/:game_id/:player_id/join', async (req, res) => {
+    getGame(req.params.game_id).then(pgres => {
+        if (pgres.rowCount === 0) {
+            throw new Error('Game not found');
+        }
+        getPlayer(req.params.game_id, req.params.player_id).then(pgres => {
+            if (pgres.rowCount === 0) {
+                const new_word = wordlist[Math.floor(Math.random() * wordlist.length)];
+                queryPromise('INSERT INTO player (playerguid, belongs_to, word) VALUES ($1, $2, $3)', [req.params.player_id, req.params.game_id, new_word]).then(pgres => {
+                    res.send({
+                        "success": true
+                    });
+                }).catch(err => {
+                    res.send({
+                        "error": err.message
+                    });
+                });
+            } else {
+                throw new Error('Player already exists');
+            }
+        }).catch(err => {
+            res.send({
+                "error": err.message
+            });
+        });
+    }).catch(err => {
+        res.status(404).send({
+            "error": err.message
+        });
+    });
+
+
+    return
     const game = db.data.games.find(game => game.gameID === req.params.game_id);
     const player = game.players[req.params.player_id];
     if (player) {
