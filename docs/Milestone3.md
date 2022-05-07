@@ -1,9 +1,13 @@
 # Milestone 3
+## Team 40: Skrawl.io: Spring 2022
 
-## Division of Labor
+# Team 40
+## Skrawl.io: Spring 2022
 
-Robert Washbourne - rawsh: Worked on adding Postgres to Heroku & init script, connection to database with rollback and commit, refactoring the backend with SQL queries and promises
 
+## Innovative Idea
+
+Our application is a game in which a group of people join a lobby, draw a given word, and then try to guess what everyone else has drawn. This application is innovative as it takes the ideas from other web games like gartic.io and scribbl.io and adds a unique twist.
 ## Part 0 - API
 
 ### Descriptions
@@ -79,6 +83,22 @@ In the guessing screen each player can then guess what the other players have dr
 ![Guessing SCreen](Guessing_Screen.png)
 The score screen shows who won the game, and also shows the score for each player.
 ![Score Screen](Score_Screen.png)
+
+
+## Division of Labor
+
+Robert Washbourne - rawsh: Worked on adding Postgres to Heroku & init script, connection to database with rollback and commit, refactoring the backend with SQL queries and promises
+
+Kabeera Singh - Kabeera-Singh: Wored on API, connection to heroku, project design
+
+Brandon O'Brien Jones - bobrienjones: 
+
+Anthony Marcone - antchamp: 
+
+
+## Conclusion
+
+
 
 ### Heroku URL
 <https://cs326-final-team40-web.herokuapp.com/>
