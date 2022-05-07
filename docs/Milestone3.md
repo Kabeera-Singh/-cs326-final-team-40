@@ -89,9 +89,9 @@ The score screen shows who won the game, and also shows the score for each playe
 
 Robert Washbourne - rawsh: Worked on adding Postgres to Heroku & init script, connection to database with rollback and commit, refactoring the backend with SQL queries and promises
 
-Kabeera Singh - Kabeera-Singh: Wored on API, connection to heroku, project design
+Kabeera Singh - Kabeera-Singh: Worked on API, connection to heroku, project design
 
-Brandon O'Brien Jones - bobrienjones: 
+Brandon O'Brien Jones - bobrienjones: Project design
 
 Anthony Marcone - antchamp: 
 
