@@ -123,3 +123,7 @@ DELETE:
 
 <h4>Conclusion</h4>
 <p> Overall, this was an interesting and fun experience to work on a web program from concept to implemenation as a group. The most important takeaway from the design process would probably be make sure you have an alternate solution before you start to work. This stretches back to the beginning of the project when we were first thinking about what we wanted to do, and how we would design the game asynchronusly if we couldn't make it synchronus. This also caused a few problems in the middle of the project when we build parts assuming we would have another part work in a particular way, but could not get it to work. Ultimately if we were going to do this again we would want to have a better grasp on what we would know by the end, as trying to design a project while uncertain about how well you can execute key aspects is a less than fun experience. </p>
+
+
+<h4>Our proposed final rubric:</h4>
+<img src = FinalRubric.png></img>
